@@ -1,0 +1,4 @@
+interface:
+  display_name: "Math Note to Paper"
+  short_description: "Turn mathematical notes into publication-ready papers"
+  default_prompt: "Use $turn-math-note-into-paper to challenge the inherited architecture, rebuild the manuscript around reader-facing dependencies, preserve supported mathematical claims, open the introduction with verified historical context before detailed definitions, fix deterministic writing and TeX defects, and leave precise neutral checks wherever mathematics, scope, citations, or figure validity cannot be verified."
