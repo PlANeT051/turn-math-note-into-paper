@@ -11,7 +11,7 @@ Convert discovery-order notes into a coherent mathematical article without inven
 
 ## Non-negotiable rules
 
-- Preserve every mathematical claim, hypothesis, quantifier, exception, and dependency unless the user explicitly authorizes a change.
+- Do not silently change a theorem-level claim, hypothesis, quantifier, exception, or still-used dependency. In an authorized restructure, an obsolete proof route may leave the reader-facing draft only after its removal is recorded and every uncertain or still-dependent mathematical fragment is preserved in the change map or quarantine.
 - Never fill a proof gap, strengthen a theorem, assert novelty, or invent a citation. Mark unresolved items visibly.
 - Do not insert a “standard” definition or convention that is absent from the source as if the author chose it. Either derive wording from supplied material or mark an editorial option for author confirmation.
 - Separate verified facts from editorial suggestions. Use labels such as `MATHEMATICAL CHECK`, `CITATION NEEDED`, and `EDITORIAL OPTION`.
@@ -36,7 +36,7 @@ Choose the mode that matches the manuscript's evidence, not its surface polish:
 
 If the mode is unclear, inspect the manuscript and select it from evidence; do not stop merely to ask which label the user prefers.
 
-Before choosing **Polish**, run an architecture challenge: state the paper's conceptual center, assign one function to every section, propose at least one plausible dependency-driven order, and explain why the current order should be retained. If the current order merely follows the source, begins with routine definitions before the paper's motivating history under this author's house style, mixes mathematically distinct result families, or makes a late theorem carry the real contribution, select **Restructure**.
+Before choosing **Polish**, run an architecture challenge: state the paper's conceptual center, assign one function to every section, propose at least one plausible dependency-driven order, and explain why the current order should be retained. If the current order merely follows the source, opens with a textbook inventory instead of the precise central object, buries the broad-to-narrow literature funnel, mixes mathematically distinct result families, or makes a late theorem carry the real contribution, select **Restructure**.
 
 Use honest readiness labels in reports:
 
@@ -55,7 +55,7 @@ Use honest readiness labels in reports:
 - Read the skill and TeX sources as UTF-8. On Windows, if punctuation appears as mojibake, reread with an explicit UTF-8 decoder before reporting corruption; do not confuse a shell-decoding error with file damage.
 - Read the entire note before rewriting isolated sentences.
 - Extract existing title candidates, theorem statements, definitions, proof dependencies, examples, limitations, citations, and unresolved annotations.
-- When TeX is available, run `python scripts/audit_tex.py <root.tex>` for a baseline report.
+- When TeX is available, compile from the real root but audit a temporary flattened expansion. Prefer `latexpand --keep-comments <root.tex> --output <audit_flattened.tex>` followed by `python scripts/audit_tex.py <audit_flattened.tex>`; keeping comments prevents percent-escaped DOI/URL text such as `%3C` from truncating a source line, and the audit script removes actual comments before analysis. Do not treat a root-only audit as complete because the script does not expand `\input` or `\include`. If flattening is unavailable, audit every reachable TeX input and state that cross-file label/reference resolution remains limited.
 
 ### 2. Build a contribution ledger
 
@@ -117,6 +117,7 @@ Load `references/latex-project-structure-and-tikz.md` whenever changing or audit
 - Start proofs with the setup and strategy; then organize long arguments around the spine `purpose → claim → explicit use → construction → verification → consequence → return`. Use named steps or cases only when they expose real structure.
 - Give each proof paragraph one primary job. At genuine phase boundaries, add a role, purpose, use, consequence, or closure sentence rather than another generic connective.
 - Make case coverage, symmetry reductions, exceptional configurations, and termination explicit. Supply a coverage reason: define the universe and splitting predicates, handle overlap and coincidences, justify symmetry, and close the cases back to one conclusion.
+- Audit vacuous quantification and empty indexed families at the minimum dimension. A condition imposed only on objects indexed from (2) through (d) is automatically true when (d=1), and may silently move the base case into an exceptional class.
 - For every reduction, verify that the new object re-enters the theorem's scope, is strictly smaller in the induction parameter, avoids named exceptions, preserves the required invariant, and lifts the conclusion back.
 - Record the reduction arithmetic explicitly—at minimum the size change and parameter change—and check that they preserve the strict inequality needed for minimality.
 - After proving an intermediate claim, reconnect it to the promised construction or bound. After a dense calculation, interpret the property it establishes.
@@ -129,7 +130,7 @@ Load `references/latex-project-structure-and-tikz.md` whenever changing or audit
 - Apply the author's lexical preferences by meaning: use `Let` to introduce an object, prefer an exact `we have`/`we obtain` consequence to generic `we compute`, and use `we prove` rather than `we argue` when announcing a proof. Do not perform blind global replacements.
 - Under this house style, review every imperative `Write` and every `We write`. Prefer `Let`, `denote`, `represent`, or the exact conditional relation; repeated `write` is a failed prose pass even when each occurrence is grammatical.
 - Do not use `as usual` as proof support. State the convention, boundary interpretation, symmetry, or earlier result explicitly.
-- For parametrized periodic constructions, separate the boundary case before the repeated pattern. Handle (r=3) explicitly; only then introduce (s\ge1) for (r=2s+3), or give an equally explicit case formulation.
+- For parametrized periodic constructions, separate the boundary case before the repeated pattern. Handle \(r=3\) explicitly; only then introduce \(s\ge1\) for \(r=2s+3\), or give an equally explicit case formulation.
 - Treat `plane`/`planar`, arbitrary face/outer face, graph/dual graph, and ambient-set subscripts as mathematical distinctions, not stylistic variants.
 
 Do not spend time beautifying prose in a proof branch that may still be discarded. First stabilize the claim and proof architecture, then polish.
@@ -142,19 +143,23 @@ Before drafting prose, build a citation map with these functions: problem anchor
 
 Organize the literature from the broad problem toward the manuscript's exact regime. For every cited result, record enough of its object, scope, bound, and role to show how it locates the gap. Add literature in separate coverage, ordering, and claim-level verification passes; citation count is not a quality measure.
 
-Under this author's explicit house style, begin with the historical problem and the line of work that leads to the object. Do not open with “All graphs are finite and simple,” a list of routine symbols, or a full product definition. Give the precise central definition after the historical positioning, and move detailed notation to preliminaries.
+End the prior-work phase with an explicit contribution boundary. Do not expect attribution in a theorem heading, a change of citation density, or theorem numbering to tell the reader which results are new. Under this author's house style, make this boundary in ordinary prose, for example, “In this paper, we study ... Our first main result ...”; do not add a standalone bold `Our results` heading unless the author or venue requests one. Then introduce each main result by stating which cited gap it closes. If a formal theorem repeats known boundary cases for completeness, identify the known cases and the genuinely new range before the statement.
+
+State every principal contribution formally in the introduction when its hypotheses and cases are needed to understand the paper's scope. Do not replace a central classification theorem with a forward reference to a later section or with a paragraph emphasizing only its unresolved cases. If the formal statement needs specialized notation, define the minimum notation immediately before it near the end of the introduction.
+
+Under this author's explicit house style, open with the precise definition of the paper's central object or parameter. This opening may repeat the abstract's short definition. Do not replace it with “All graphs are finite and simple,” a list of routine symbols, or a full textbook definition of familiar objects. After the central definition, organize the literature from the broad problem to the exact subarea. Mention a complicated neighboring notion briefly when it first becomes relevant, but postpone its full definition and the remaining specialized notation until the end of the introduction unless a formal statement would otherwise be meaningless.
 
 Build the introduction in this functional order, adapting rather than mechanically copying it:
 
-1. Establish the historical problem and the prior line of work that motivates the object.
-2. Define the central problem or parameter precisely.
-3. State the remaining prior work needed to locate the gap.
-4. Formulate the precise unresolved question, limitation, or conceptual disconnect.
-5. State the main theorem with scope and exceptions.
-6. Explain the contribution in relation to prior work without unsupported priority language.
-7. Discuss tightness, limitations, or counterexamples when they shape interpretation.
-8. Give a proof idea or conceptual bridge.
-9. End with a short roadmap if the paper's organization is not self-evident.
+1. Define the central object or parameter precisely and compactly.
+2. Develop the literature from the broad problem to the manuscript's exact subarea.
+3. State the known frontier and formulate the precise unresolved question, limitation, or conceptual disconnect.
+4. Mark the transition from prior work to the present paper explicitly, then state the main theorem or theorems with their scope and exceptions.
+5. Explain the contribution in relation to prior work, including tightness, limitations, counterexamples, or a proof idea only when they help interpretation.
+6. In the penultimate paragraph or block, collect the detailed nonstandard definitions and notation needed later but not needed earlier to understand the formal results.
+7. Use the final paragraph only for the section-by-section roadmap.
+
+If a complex definition is indispensable to a theorem stated earlier, give the minimum precise version at first use and consolidate the remaining conventions in the penultimate block. Elementary definitions familiar to the intended readership need not be restated.
 
 Prefer a chronological literature list only when chronology itself explains the problem's development. Otherwise organize prior work by mathematical role.
 
@@ -175,7 +180,7 @@ Whenever a main theorem, hypothesis, exception, equality case, or claimed applic
 
 ### 8. Refactor and compress
 
-- Delete or quarantine abandoned proof paths once the surviving route is verified by the author.
+- Delete or quarantine abandoned proof paths once the surviving route is verified by the author. Deletion from the reader-facing draft does not authorize silent loss: record the route in the change map, retain any still-dependent lemma, and quarantine uncertain mathematical content rather than discarding it.
 - Merge repeated definitions, observations, and setup paragraphs.
 - Replace diary-like transitions (`now we try`, `so we create`, `next we want`) with logical relations (`to prove`, `by contrast`, `it remains to show`).
 - Reorder material so prerequisites precede uses and consequences follow the results they depend on.
@@ -201,7 +206,7 @@ Use `references/revision-checklists.md` for the gates and final checklist.
 
 ### 10. Audit and verify
 
-- Run `python scripts/audit_tex.py <root.tex> --json <report.json>`.
+- Generate a temporary flattened TeX file from the root with `latexpand --keep-comments`, then run `python scripts/audit_tex.py <audit_flattened.tex> --json <report.json>`. Compile the original root separately. If the project cannot be flattened, audit every reachable input and disclose the script's cross-file limitation.
 - The audit script intentionally exits nonzero when the selected `--fail-on` severity is found. Treat a parseable report/JSON plus expected finding exit as a successful audit with findings; distinguish it from a crash, unreadable input, or missing output.
 - Resolve or report every error and warning; rerun until the remaining items are intentional.
 - Compile the project when a LaTeX runtime is available. Inspect undefined references, citations, overfull boxes, theorem numbering, figure placement, and bibliography output.
